@@ -54,13 +54,15 @@ import AddNewTask from './AddNewTask.vue';
 #to-do-list {
     max-width: 100%;
 
-    padding: 2rem;
+    padding-block: 1rem;
+    padding-inline: 2rem;
 
     border-radius: .75rem;
 
     background-color: rgb(50, 50, 50);
 
     h1 {
+        margin-bottom: .5rem;
         text-align: center;
     }
 
