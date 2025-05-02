@@ -1,5 +1,7 @@
 <template>
-    <form id="add-new-task" @submit.prevent="">
+    <form id="add-new-task" @submit.prevent="$emit('add-new-task', 'adsf', 'gjgk')"> 
+        <!-- change adsf and gjgk to values got from v-model in those inputs -->
+         <!-- add checking for empty inputs ==> create a function for the submitting, if empty, dont submit and emit @empty or smth -->
         <div class="task-group">
             <label for="task-name">Task Name</label>
             <input type="text" id="task-name" placeholder="Type here...">

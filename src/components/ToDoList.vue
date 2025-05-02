@@ -1,20 +1,24 @@
 <template>
     <section id="to-do-list">
         <h1>To-Do List made with Vue</h1>
-        <AddNewTask />
+        <AddNewTask @add-new-task="addNewTask" />
         <ul>
             <li v-for="task in tasks" :key="task.id">
                 <article>
                     <header>
-                        <h2>{{ task.name }}</h2>
-                        <button v-if="!task.editingTask" @click="editTask(task.id)">Edit</button>
-                        <button v-else @click="editTask(task.id)">Done</button>
+                        <h2 v-if="!task.editingTask">{{ task.name }}</h2>
+                        <input v-else v-model="task.newHeading" @keyup.enter="editTask(task.id)"
+                            @keyup.esc="cancelEdit(task.id)" type="text" :placeholder="task.name">
 
+                        <button v-if="!task.editingTask" @click="editTask(task.id)">Edit</button>
+                        <button v-if="task.editingTask" @click="editTask(task.id)">Done</button>
+                        <button v-if="task.editingTask" @click="cancelEdit(task.id)">Cancel</button>
 
                         <button @click="removeTask(task.id)">Remove</button>
                     </header>
                     <p v-if="!task.editingTask">{{ task.description }}</p>
-                    <textarea v-else v-model="task.newText" @keyup.enter="editTask(task.id)">{{ task.description }}</textarea>
+                    <textarea v-else v-model="task.newText" @keyup.enter="editTask(task.id)"
+                        @keyup.esc="cancelEdit(task.id)">{{ task.description }}</textarea>
                 </article>
             </li>
         </ul>
@@ -35,6 +39,7 @@ async function getTasks() {
         tasks.value.forEach(task => {
             task.editingTask = false;
             task.newText = task.description;
+            task.newHeading = task.name;
         });
     } catch (error) {
         console.error('Error fetching tasks: ', error);
@@ -45,6 +50,7 @@ async function getTasks() {
 function removeTask(id) {
     const index = tasks.value.findIndex((task) => task.id === id);
     if (index === -1) return console.error('Task not found');
+
     tasks.value.splice(index, 1);
 }
 
@@ -55,12 +61,35 @@ function editTask(id) {
     const isEditing = tasks.value[index].editingTask;
     tasks.value[index].editingTask = !isEditing;
 
-    if(isEditing) {
+    if (isEditing) {
         tasks.value[index].description = tasks.value[index].newText;
+        tasks.value[index].name = tasks.value[index].newHeading;
     }
 
     // console.log(event);
     // if ()
+}
+
+function cancelEdit(id) {
+    const index = tasks.value.findIndex((task) => task.id === id);
+    if (index === -1) return console.error('Task not found');
+
+    tasks.value[index].newText = tasks.value[index].description;
+    tasks.value[index].newHeading = tasks.value[index].name;
+    tasks.value[index].editingTask = false;
+}
+
+function addNewTask(taskName, taskDescription) {
+    const newTask = {
+        id: Date.now(),
+        name: taskName,
+        description: taskDescription,
+        editingTask: false,
+        newText: taskDescription,
+        newHeading: taskName
+    };
+
+    tasks.value.push(newTask);
 }
 
 onMounted(getTasks);
@@ -92,6 +121,7 @@ onMounted(getTasks);
         padding: 0;
 
         li {
+            max-width: 21.5rem;
             min-height: 10rem;
 
             padding: .75rem;
@@ -112,15 +142,61 @@ onMounted(getTasks);
                     align-items: center;
                     gap: .5rem;
 
+                    margin-bottom: .5rem;
+
                     h2 {
                         margin-right: auto;
-                        margin-bottom: .5rem;
+
+                        overflow-wrap: anywhere;
+
+                        color: #f487aa
+                    }
+
+                    input {
+                        margin-right: auto;
+                        padding: .25rem;
+                        max-width: 5rem;
                     }
 
                     button {
                         padding-block: .25rem;
                         padding-inline: .75rem;
                     }
+                }
+
+                input,
+                textarea {
+                    background: rgba($color: #f9f9f9, $alpha: 0.25);
+                    border-color: #f9f9f9;
+
+                    padding-block: .25rem;
+                    padding-inline: .5rem;
+                    margin: 0;
+                }
+
+                input {
+                    color: #f487aa;
+                    max-width: 5rem;
+
+
+                    font-family: "Oswald", sans-serif;
+                    font-optical-sizing: auto;
+                    font-weight: 700;
+                    font-style: normal;
+                    font-size: 1.4rem;
+                    font-weight: bold;
+                }
+
+                textarea {
+
+                    font-family: "Open Sans", sans-serif;
+                    font-optical-sizing: auto;
+                    font-weight: 400;
+                    font-style: normal;
+                    font-variation-settings: "wdth" 100;
+                    font-size: 1rem;
+
+                    color: #f9f9f9;
                 }
 
                 p {
