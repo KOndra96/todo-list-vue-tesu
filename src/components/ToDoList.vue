@@ -7,9 +7,14 @@
                 <article>
                     <header>
                         <h2>{{ task.name }}</h2>
+                        <button v-if="!task.editingTask" @click="editTask(task.id)">Edit</button>
+                        <button v-else @click="editTask(task.id)">Done</button>
+
+
                         <button @click="removeTask(task.id)">Remove</button>
                     </header>
-                    <p>{{ task.description }}</p>
+                    <p v-if="!task.editingTask">{{ task.description }}</p>
+                    <textarea v-else v-model="task.newText" @keyup.enter="editTask(task.id)">{{ task.description }}</textarea>
                 </article>
             </li>
         </ul>
@@ -26,6 +31,11 @@ async function getTasks() {
         const response = await fetch('https://hp-api.onrender.com/api/spells');
         const data = await response.json();
         tasks.value = data;
+
+        tasks.value.forEach(task => {
+            task.editingTask = false;
+            task.newText = task.description;
+        });
     } catch (error) {
         console.error('Error fetching tasks: ', error);
         return [];
@@ -34,9 +44,23 @@ async function getTasks() {
 
 function removeTask(id) {
     const index = tasks.value.findIndex((task) => task.id === id);
-    if (index !== -1) {
-        tasks.value.splice(index, 1);
+    if (index === -1) return console.error('Task not found');
+    tasks.value.splice(index, 1);
+}
+
+function editTask(id) {
+    const index = tasks.value.findIndex((task) => task.id === id);
+    if (index === -1) return console.error('Task not found');
+
+    const isEditing = tasks.value[index].editingTask;
+    tasks.value[index].editingTask = !isEditing;
+
+    if(isEditing) {
+        tasks.value[index].description = tasks.value[index].newText;
     }
+
+    // console.log(event);
+    // if ()
 }
 
 onMounted(getTasks);
@@ -84,10 +108,12 @@ onMounted(getTasks);
 
                 header {
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: flex-end;
                     align-items: center;
+                    gap: .5rem;
 
                     h2 {
+                        margin-right: auto;
                         margin-bottom: .5rem;
                     }
 
