@@ -1,22 +1,56 @@
 <template>
-    <form id="add-new-task" @submit.prevent="$emit('add-new-task', 'adsf', 'gjgk')"> 
+    <form id="add-new-task" @submit.prevent="submitNewTask(newName, newDescription)">
         <!-- change adsf and gjgk to values got from v-model in those inputs -->
-         <!-- add checking for empty inputs ==> create a function for the submitting, if empty, dont submit and emit @empty or smth -->
+        <!-- add checking for empty inputs ==> create a function for the submitting, if empty, dont submit and emit @empty or smth -->
         <div class="task-group">
             <label for="task-name">Task Name</label>
-            <input type="text" id="task-name" placeholder="Type here...">
+            <input type="text" id="task-name" placeholder="Type here..." v-model="newName">
         </div>
 
         <div class="task-group">
             <label for="task-description">Task Description</label>
-            <input type="text" id="task-description" placeholder="Type here...">
+            <input type="text" id="task-description" placeholder="Type here..." v-model="newDescription">
         </div>
 
         <button type="submit">Add New Task</button>
     </form>
 </template>
 <script setup>
+import { ref, defineEmits } from 'vue';
 
+const emit = defineEmits(['add-new-task', 'empty-name', 'empty-description']);
+
+const newName = ref('');
+const newDescription = ref('');
+
+function submitNewTask(name, description) {
+    if (!name) return showNameError('Please enter a task name');
+    if (!description) return showDescriptionError('Please enter a description');
+
+    hideErrors();
+    emit('add-new-task', name, description);
+}
+
+function showNameError(error) {
+
+}
+
+function showDescriptionError(error) {
+    
+}
+
+function hideNameError() {
+
+}
+
+function hideDescriptionError() {
+    
+}
+
+function hideErrors() {
+    hideNameError();
+    hideDescriptionError();
+}
 </script>
 <style scoped lang="scss">
 #add-new-task {

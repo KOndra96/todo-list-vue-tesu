@@ -89,7 +89,7 @@ function addNewTask(taskName, taskDescription) {
         newHeading: taskName
     };
 
-    tasks.value.push(newTask);
+    tasks.value.unshift(newTask);
 }
 
 onMounted(getTasks);
@@ -188,6 +188,7 @@ onMounted(getTasks);
                 }
 
                 textarea {
+                    max-width: 100%;
 
                     font-family: "Open Sans", sans-serif;
                     font-optical-sizing: auto;
@@ -202,6 +203,8 @@ onMounted(getTasks);
                 p {
                     margin: 0;
                     margin-bottom: .5rem;
+
+                    overflow-wrap: anywhere;
                 }
             }
 
