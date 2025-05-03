@@ -2,7 +2,7 @@
     <section id="to-do-list">
         <h1>To-Do List made with Vue</h1>
         <AddNewTask @add-new-task="addNewTask" />
-        <ul>
+        <transition-group name="list" tag="ul">
             <li v-for="task in tasks" :key="task.id">
                 <article>
                     <header>
@@ -21,7 +21,7 @@
                         @keyup.esc="cancelEdit(task.id)">{{ task.description }}</textarea>
                 </article>
             </li>
-        </ul>
+        </transition-group>
     </section>
 </template>
 <script setup>
@@ -65,9 +65,6 @@ function editTask(id) {
         tasks.value[index].description = tasks.value[index].newText;
         tasks.value[index].name = tasks.value[index].newHeading;
     }
-
-    // console.log(event);
-    // if ()
 }
 
 function cancelEdit(id) {
@@ -210,6 +207,18 @@ onMounted(getTasks);
 
         }
     }
+}
+
+
+.list-enter-active,
+.list-leave-active {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
 }
 
 @media screen and (max-width: 600px) {
