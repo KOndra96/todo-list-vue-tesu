@@ -218,7 +218,11 @@ onMounted(getTasks);
 .list-enter-from,
 .list-leave-to {
     opacity: 0;
-    transform: translateY(30px);
+    transform: scale(.75);
+}
+
+.list-move {
+    transition: transform 0.2s ease;
 }
 
 @media screen and (max-width: 600px) {
